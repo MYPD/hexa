@@ -10,15 +10,18 @@ function App() {
     const [loaded, setLoaded] = React.useState(false);
 
     React.useEffect(() => {
-        classifier = ml5.imageClassifier("/model/model.json", () => {
-            navigator.mediaDevices
-                .getUserMedia({ video: true, audio: false })
-                .then((stream) => {
-                    videoRef.current.srcObject = stream;
-                    videoRef.current.play();
-                    setLoaded(true);
-                });
-        });
+        classifier = ml5.imageClassifier(
+            "https://teachablemachine.withgoogle.com/models/Zmpf_xVav/model.json",
+            () => {
+                navigator.mediaDevices
+                    .getUserMedia({ video: true, audio: false })
+                    .then((stream) => {
+                        videoRef.current.srcObject = stream;
+                        videoRef.current.play();
+                        setLoaded(true);
+                    });
+            }
+        );
     }, []);
 
     if (classifier && start) {
@@ -70,7 +73,7 @@ function App() {
                                             item.confidence * 100
                                         );
                                         return (
-                                            <>
+                                            <div key={item.label}>
                                                 <h3 className="py-2 font-semibold text-gray-300">
                                                     Classification Confidence:{" "}
                                                     {item.label}
@@ -101,7 +104,7 @@ function App() {
                                                         ].join(" ")}
                                                     />
                                                 </div>
-                                            </>
+                                            </div>
                                         );
                                     })}
                                 </div>
