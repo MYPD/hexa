@@ -61,7 +61,7 @@ function App() {
 
                 {loading && (
                     <div className="fixed inset-0 z-10 flex items-center justify-center">
-                        <div className="max-w-xs w-full p-4 text-center text-white bg-gray-900 rounded-full">
+                        <div className="max-w-xs w-full p-4 text-center text-white bg-gray-900">
                             <div className="text-3xl">Loading...</div>
                         </div>
                     </div>
