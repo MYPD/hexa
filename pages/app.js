@@ -20,6 +20,7 @@ function App() {
             setPredictions(response.data.predictions);
         } catch (error) {
             setError(error);
+            setTimeout(() => setError(null), 4000);
         }
         setLoading(false);
     };
