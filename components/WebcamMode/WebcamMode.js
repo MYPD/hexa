@@ -1,7 +1,7 @@
 import React from "react";
 import Webcam from "react-webcam";
 
-export default function WebcamMode() {
+export default function WebcamMode({ scanImage }) {
     const videoRef = React.useRef();
     const [videoError, setVideoError] = React.useState(false);
     const [imageFromVideoSrc, setImageFromVideoSrc] = React.useState(null);
@@ -13,7 +13,6 @@ export default function WebcamMode() {
             // A video's MediaStream object is available through its srcObject attribute
             const mediaStream = videoRef.current.srcObject;
             const tracks = mediaStream.getTracks();
-            console.log(tracks);
             tracks.forEach((track) => track.stop());
         };
     }, []);
@@ -38,8 +37,10 @@ export default function WebcamMode() {
                                 }}
                                 imageSmoothing={true}
                                 autoPlay
+                                screenshotFormat="image/png"
                             />
                         )}
+
                         <div className="flex items-center justify-center py-5 text-center">
                             {!imageFromVideoSrc ? (
                                 <div className="mx-3">
@@ -70,7 +71,7 @@ export default function WebcamMode() {
                                         <button
                                             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                                             onClick={() =>
-                                                setImageFromVideoSrc(null)
+                                                scanImage(imageFromVideoSrc)
                                             }
                                         >
                                             Scan

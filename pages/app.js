@@ -1,8 +1,32 @@
+import axios from "axios";
 import React from "react";
 import { WebcamMode, FileMode } from "../components";
 
 function App() {
     const [detectMethod, setDetectMethod] = React.useState("webcam");
+    const [predictions, setPredictions] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+
+    const scanImage = async (imageSrc) => {
+        setError(null);
+        setLoading(true);
+        try {
+            // Send image to backend for detection
+            const response = await axios.post("/api/classify", {
+                image: imageSrc
+            });
+            setPredictions(response.data.predictions);
+        } catch (error) {
+            setError(error);
+        }
+        setLoading(false);
+    };
+
+    React.useEffect(() => {
+        setError(null);
+        setPredictions([]);
+    }, [detectMethod]);
 
     return (
         <>
@@ -28,9 +52,69 @@ function App() {
                     </div>
                 </div>
 
-                {detectMethod === "webcam" && <WebcamMode />}
+                {detectMethod === "webcam" && (
+                    <WebcamMode scanImage={scanImage} />
+                )}
 
-                {detectMethod === "file" && <FileMode />}
+                {detectMethod === "file" && <FileMode scanImage={scanImage} />}
+
+                {loading && (
+                    <div className="fixed inset-0 z-10 flex items-center justify-center">
+                        <div className="p-4 text-center text-white">
+                            <div className="text-3xl">Loading...</div>
+                        </div>
+                    </div>
+                )}
+
+                {error && (
+                    <div className="fixed inset-0 z-10 flex items-center justify-center">
+                        <div className="max-w-xs p-4 text-center text-white bg-red-600">
+                            <div className="text-3xl">Error!</div>
+                            <div className="text-lg">{error.message}</div>
+                        </div>
+                    </div>
+                )}
+
+                {predictions.length > 0 && (
+                    <div className="max-w-xs w-full py-5 px-3 m-auto">
+                        {predictions.slice(0, 5).map((item) => {
+                            const score = Math.floor(item.score * 100);
+                            return (
+                                <div key={item.class}>
+                                    <h3 className="py-2 font-semibold text-gray-300">
+                                        Classification Confidence: {item.class}
+                                    </h3>
+                                    <div className="grid grid-cols-3 gap-4 ">
+                                        <div
+                                            className={[
+                                                "bg-red-500 h-5",
+                                                score > 10
+                                                    ? "opacity-100"
+                                                    : "opacity-50"
+                                            ].join(" ")}
+                                        />
+                                        <div
+                                            className={[
+                                                "bg-yellow-500 h-5",
+                                                score > 40
+                                                    ? "opacity-100"
+                                                    : "opacity-50"
+                                            ].join(" ")}
+                                        />
+                                        <div
+                                            className={[
+                                                "bg-green-500 h-5",
+                                                score > 75
+                                                    ? "opacity-100"
+                                                    : "opacity-50"
+                                            ].join(" ")}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </main>
         </>
     );
