@@ -1,118 +1,37 @@
 import React from "react";
-
-let ml5, classifier;
-if (typeof window !== "undefined") ml5 = require("ml5");
+import { WebcamMode, FileMode } from "../components";
 
 function App() {
-    const videoRef = React.useRef();
-    const [start, setStart] = React.useState(false);
-    const [result, setResult] = React.useState([]);
-    const [loaded, setLoaded] = React.useState(false);
-
-    React.useEffect(() => {
-        classifier = ml5.imageClassifier(
-            "https://teachablemachine.withgoogle.com/models/Zmpf_xVav/model.json",
-            () => {
-                navigator.mediaDevices
-                    .getUserMedia({ video: true, audio: false })
-                    .then((stream) => {
-                        videoRef.current.srcObject = stream;
-                        videoRef.current.play();
-                        setLoaded(true);
-                    });
-            }
-        );
-    }, []);
-
-    if (classifier && start) {
-        classifier.classify(videoRef.current, (error, results) => {
-            if (error) {
-                console.error(error);
-                return;
-            }
-            setResult(results);
-            console.log(results);
-        });
-    }
-
-    const toggle = () => {
-        setStart(!start);
-        setResult([]);
-    };
+    const [detectMethod, setDetectMethod] = React.useState("webcam");
 
     return (
         <>
-            <section className="bg-white min-h-screen">
-                <div className="flex flex-col min-h-screen overflow-hidden bg-gray-900 p-5">
-                    <div className="container flex items-center flex-1 px-6 py-8 mx-auto lg:py-0">
-                        <div className="max-w-xs mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800">
-                            <div className="image-upload">
-                                <video
-                                    ref={videoRef}
-                                    style={{ transform: "scale(-1, 1)" }}
-                                    className="object-cover min-w-full h-80 cursor-pointer"
+            <main className="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-900">
+                <div className="relative max-w-xs w-full py-5">
+                    <div>
+                        <select
+                            className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline"
+                            onChange={(e) => setDetectMethod(e.target.value)}
+                        >
+                            <option value="webcam">From WebCam</option>
+                            <option value="file">From File</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg className="w-4 h-4" viewBox="0 0 20 20">
+                                <path
+                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                    clipRule="evenodd"
+                                    fillRule="evenodd"
                                 />
-                            </div>
-                            <div className="py-5 text-center">
-                                <div className="mt-3">
-                                    {loaded && (
-                                        <button
-                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                            onClick={() => toggle()}
-                                        >
-                                            {start ? "Stop" : "Start"}
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-
-                            {result.length > 0 && (
-                                <div className="py-5 px-3 m-auto">
-                                    {result.slice(0, 5).map((item) => {
-                                        const confidence = Math.floor(
-                                            item.confidence * 100
-                                        );
-                                        return (
-                                            <div key={item.label}>
-                                                <h3 className="py-2 font-semibold text-gray-300">
-                                                    Classification Confidence:{" "}
-                                                    {item.label}
-                                                </h3>
-                                                <div className="grid grid-cols-3 gap-4 ">
-                                                    <div
-                                                        className={[
-                                                            "bg-red-500 h-5",
-                                                            confidence > 10
-                                                                ? "opacity-100"
-                                                                : "opacity-50"
-                                                        ].join(" ")}
-                                                    />
-                                                    <div
-                                                        className={[
-                                                            "bg-yellow-500 h-5",
-                                                            confidence > 40
-                                                                ? "opacity-100"
-                                                                : "opacity-50"
-                                                        ].join(" ")}
-                                                    />
-                                                    <div
-                                                        className={[
-                                                            "bg-green-500 h-5",
-                                                            confidence > 75
-                                                                ? "opacity-100"
-                                                                : "opacity-50"
-                                                        ].join(" ")}
-                                                    />
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
+                            </svg>
                         </div>
                     </div>
                 </div>
-            </section>
+
+                {detectMethod === "webcam" && <WebcamMode />}
+
+                {detectMethod === "file" && <FileMode />}
+            </main>
         </>
     );
 }
