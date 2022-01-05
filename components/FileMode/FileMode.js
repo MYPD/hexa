@@ -12,7 +12,7 @@ export default function FileMode({ scanImage }) {
                 <div className="image-upload">
                     <label htmlFor="file-input">
                         <img
-                            className="object-cover min-w-full h-80 cursor-pointer"
+                            className="object-contain min-w-full h-80 cursor-pointer"
                             src={imageSrc || defaultImage}
                         />
                     </label>
@@ -39,7 +39,7 @@ export default function FileMode({ scanImage }) {
                     </span>
 
                     {imageSrc && (
-                        <div className="flex items-center justify-center text-center">
+                        <div className="flex items-center justify-center text-center py-5">
                             <div className="mx-3">
                                 <button
                                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

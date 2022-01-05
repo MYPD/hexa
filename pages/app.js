@@ -11,6 +11,7 @@ function App() {
     const scanImage = async (imageSrc) => {
         setError(null);
         setLoading(true);
+        setPredictions([]);
         try {
             // Send image to backend for detection
             const response = await axios.post("/api/classify", {
@@ -60,7 +61,7 @@ function App() {
 
                 {loading && (
                     <div className="fixed inset-0 z-10 flex items-center justify-center">
-                        <div className="p-4 text-center text-white">
+                        <div className="max-w-xs w-full p-4 text-center text-white bg-gray-900 rounded-full">
                             <div className="text-3xl">Loading...</div>
                         </div>
                     </div>
