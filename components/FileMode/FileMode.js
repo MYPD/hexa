@@ -8,7 +8,7 @@ export default function FileMode({ scanImage }) {
 
     return (
         <>
-            <div className="max-w-xs mx-auto overflow-hidden rounded-lg shadow-lg bg-gray-800">
+            <div className="max-w-xs w-full mx-auto overflow-hidden rounded-lg shadow-lg bg-gray-800">
                 <div className="image-upload">
                     <label htmlFor="file-input">
                         <img
@@ -39,15 +39,25 @@ export default function FileMode({ scanImage }) {
                     </span>
 
                     {imageSrc && (
-                        <div className="mt-3">
-                            <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                onClick={() => {
-                                    scanImage(imageSrc);
-                                }}
-                            >
-                                Upload
-                            </button>
+                        <div className="flex items-center justify-center text-center">
+                            <div className="mx-3">
+                                <button
+                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    onClick={() => setImageSrc(null)}
+                                >
+                                    Reset
+                                </button>
+                            </div>
+                            <div className="mx-3">
+                                <button
+                                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    onClick={() => {
+                                        scanImage(imageSrc);
+                                    }}
+                                >
+                                    Scan
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
