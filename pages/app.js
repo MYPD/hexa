@@ -92,7 +92,7 @@ function App() {
                                                 "bg-red-500 h-5",
                                                 score > 10
                                                     ? "opacity-100"
-                                                    : "opacity-50"
+                                                    : "opacity-10"
                                             ].join(" ")}
                                         />
                                         <div
@@ -100,7 +100,7 @@ function App() {
                                                 "bg-yellow-500 h-5",
                                                 score > 40
                                                     ? "opacity-100"
-                                                    : "opacity-50"
+                                                    : "opacity-10"
                                             ].join(" ")}
                                         />
                                         <div
@@ -108,7 +108,7 @@ function App() {
                                                 "bg-green-500 h-5",
                                                 score > 75
                                                     ? "opacity-100"
-                                                    : "opacity-50"
+                                                    : "opacity-10"
                                             ].join(" ")}
                                         />
                                     </div>
