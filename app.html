@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexa</title>
+
+    <!-- Tailwindcss -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
+    <!-- CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier"></script>
+    <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css">
+</head>
+
+<style>
+    .container {
+        margin: 1em auto;
+        width: 400px;
+        text-align: center;
+    }
+
+    .info-text {
+        width: 50px;
+        display: inline-block;
+    }
+
+    .form-group input {
+        display: inline-block;
+    }
+
+    .form-group {
+        width: 300px;
+        margin: auto;
+    }
+
+    /* Hide video controls */
+    video::-webkit-media-controls {
+        display: none;
+    }
+</style>
+
+<body>
+
+    <main class="container">
+        <h2>Hexa</h2>
+
+        <section class="video">
+            <!-- Run & Results -->
+            <video autoplay muted controls="off" id="webcam" width="400px" height="300px"></video>
+
+            <!-- Run & Results -->
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-text" id="output-result">?</h1>
+                    <button id="run-button">Run</button>
+                    <button id="download-button">Download</button>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top: 50px;">
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="111" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="112" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="122" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="222" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="000" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="001" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="002" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="011" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="012" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group label">
+                    <input type="text" value="022" disabled />
+                    <button class="btn-small">Record</button>
+                    <span class="info-text">0</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+
+        // Global Variables
+        let KNN = null;
+        let MBNET = null;
+        let CAMERA = null;
+
+        // Config
+        const TOPK = 10;
+
+        /**
+         * Use the trained model to match images to emojis
+         */
+        async function run() {
+            let output = document.getElementById("output-result");
+
+            setInterval(async () => {
+                // Add this as a bit of data for knn
+                const numClasses = KNN.getNumClasses();
+
+                if (numClasses > 0) {
+                    // If classes have been added run predict
+                    const image = await CAMERA.capture();
+                    let logits = MBNET.infer(image, "conv_preds");
+                    const res = await KNN.predictClass(logits, TOPK);
+                    console.log(res);
+                    output.innerText = res.label;
+
+                    // Delete memory
+                    image.dispose();
+                    if (logits != null) logits.dispose();
+                }
+            }, 500);
+        }
+
+        async function save() {
+            let dataset = KNN.getClassifierDataset();
+            var datasetObj = {};
+            Object.keys(dataset).forEach((key) => {
+                let data = dataset[key].dataSync();
+                // use Array.from() so when JSON.stringify() it covert to an array string e.g [0.1,-0.2...]
+                // instead of object e.g {0:"0.1", 1:"-0.2"...}
+                datasetObj[key] = Array.from(data);
+            });
+            let jsonStr = JSON.stringify(datasetObj);
+            //can be change to other source
+            console.log(jsonStr);
+            localStorage.setItem("myData", jsonStr);
+        }
+
+        async function load() {
+            //can be change to other source
+            let dataset = localStorage.getItem("myData");
+            let tensorObj = JSON.parse(dataset);
+            //covert back to tensor
+            Object.keys(tensorObj).forEach((key) => {
+                tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1000, 1000]);
+            });
+            KNN.setClassifierDataset(tensorObj);
+        }
+
+        async function setupLabelTrainingButtons() {
+            // Set the multiple event listeners with class name "label"
+            const labels = document.querySelectorAll('.label');
+
+            labels.forEach(label => {
+                label.addEventListener('click', async () => {
+                    const label_text = label.querySelector('input').value;
+                    const button = label.querySelector('button');
+                    const infoText = label.querySelector('.info-text');
+
+                    // Increment the with number of times the label is trained
+                    infoText.innerText = parseInt(infoText.innerText) + 1;
+
+                    // Train the label
+                    // ============================================================
+
+                    // Start grabbing an image of the video
+                    const image = await CAMERA.capture();
+
+                    // Pump it through mobilenet and get the logits
+                    const logits = MBNET.infer(image, "conv_preds");
+
+                    // Add this as a bit of data for knn
+                    KNN.addExample(logits, label_text);
+
+                    // Delete memory
+                    image.dispose();
+                    if (logits != null) logits.dispose();
+                });
+            });
+        }
+
+        async function init() {
+            // Setup Models
+            console.log("Models Loading...");
+
+            KNN = knnClassifier.create();
+            MBNET = await mobilenet.load();
+
+            console.log("Models Loaded");
+
+            const videoElement = document.getElementById("webcam");
+            CAMERA = await tf.data.webcam(videoElement);
+
+            await setupLabelTrainingButtons();
+
+            // Setup Run Button
+            document.getElementById("run-button").addEventListener("click", () => run());
+
+            // Setup Download ML Model Button
+            document.getElementById("download-button").addEventListener("click", () => KNN.save());
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
