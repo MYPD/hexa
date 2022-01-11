@@ -57,7 +57,7 @@
                 <div class="card-body">
                     <h1 class="card-text" id="output-result">?</h1>
                     <button id="run-button">Run</button>
-                    <!-- <button id="download-button">Download</button> -->
+                    <button id="download-button">Download Model</button>
                 </div>
             </div>
         </section>
@@ -156,6 +156,27 @@
         // Config
         const TOPK = 10;
 
+        (async function init() {
+            // Setup Models
+            console.log("Models Loading...");
+
+            KNN = knnClassifier.create();
+            MBNET = await mobilenet.load();
+
+            console.log("Models Loaded");
+
+            const videoElement = document.getElementById("webcam");
+            CAMERA = await tf.data.webcam(videoElement);
+
+            await setupLabelTrainingButtons();
+
+            // Setup Run Button
+            document.getElementById("run-button").addEventListener("click", () => run());
+
+            // Setup Download ML Model Button
+            document.getElementById("download-button").addEventListener("click", () => save());
+        })();
+
         /**
          * Use the trained model to match images to emojis
          */
@@ -182,30 +203,54 @@
         }
 
         async function save() {
-            let dataset = KNN.getClassifierDataset();
-            var datasetObj = {};
-            Object.keys(dataset).forEach((key) => {
-                let data = dataset[key].dataSync();
+            const dataset = this.KNN.getClassifierDataset();
+            const datasetObject = {};
+            Object.keys(dataset).forEach(async (key) => {
+                const data = await dataset[key].dataSync();
                 // use Array.from() so when JSON.stringify() it covert to an array string e.g [0.1,-0.2...]
                 // instead of object e.g {0:"0.1", 1:"-0.2"...}
-                datasetObj[key] = Array.from(data);
+                datasetObject[key] = Array.from(data);
             });
-            let jsonStr = JSON.stringify(datasetObj);
+            const jsonModel = JSON.stringify(datasetObject);
+
             //can be change to other source
-            console.log(jsonStr);
-            localStorage.setItem("myData", jsonStr);
-        }
+            const downloader = document.createElement('a');
+            downloader.download = "model.json";
+            downloader.href = 'data:text/text;charset=utf-8,' + encodeURIComponent(jsonModel);
+            document.body.appendChild(downloader);
+            downloader.click();
+            downloader.remove();
+        };
 
         async function load() {
             //can be change to other source
-            let dataset = localStorage.getItem("myData");
-            let tensorObj = JSON.parse(dataset);
+            const dataset = localStorage.getItem("myData");
+            const tensorObj = JSON.parse(dataset);
             //covert back to tensor
             Object.keys(tensorObj).forEach((key) => {
-                tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1000, 1000]);
+                tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
             });
             KNN.setClassifierDataset(tensorObj);
-        }
+        };
+
+        async function uploadModel(event) {
+            const inputModel = event.target.files;
+            const fileReader = new FileReader();
+            if (inputModel.length > 0) {
+                fileReader.onload = async () => {
+                    var dataset = fileReader.result;
+                    var tensorObj = JSON.parse(dataset);
+
+                    Object.keys(tensorObj).forEach((key) => {
+                        tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
+                    });
+                    KNN.setClassifierDataset(tensorObj);
+                    console.log("Classifier has been set up! Congrats! ");
+                };
+            }
+            await fileReader.readAsText(inputModel[0]);
+            console.log("Uploaded");
+        };
 
         async function setupLabelTrainingButtons() {
             // Set the multiple event listeners with class name "label"
@@ -238,29 +283,6 @@
                 });
             });
         }
-
-        async function init() {
-            // Setup Models
-            console.log("Models Loading...");
-
-            KNN = knnClassifier.create();
-            MBNET = await mobilenet.load();
-
-            console.log("Models Loaded");
-
-            const videoElement = document.getElementById("webcam");
-            CAMERA = await tf.data.webcam(videoElement);
-
-            await setupLabelTrainingButtons();
-
-            // Setup Run Button
-            document.getElementById("run-button").addEventListener("click", () => run());
-
-            // Setup Download ML Model Button
-            // document.getElementById("download-button").addEventListener("click", () => KNN.save());
-        }
-
-        init();
     </script>
 </body>
 
