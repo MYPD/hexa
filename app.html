@@ -2,301 +2,45 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hexa</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css">
-
-    <!-- CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/webcam-easy/dist/webcam-easy.min.js"></script>
+    <script src="ml5.min.js"></script>
 </head>
 
 <style>
-    .container {
-        margin: 1em auto;
-        width: 400px;
-        text-align: center;
-    }
-
-    .info-text {
-        width: 50px;
-        display: inline-block;
-    }
-
-    .form-group input {
-        display: inline-block;
-    }
-
-    .form-group {
-        width: 300px;
-        margin: auto;
-    }
-
     /* Hide video controls */
     video::-webkit-media-controls {
         display: none;
     }
 </style>
 
-<body>
+<body class="bg-gray-900">
+    <main class="mx-auto my-1 max-w-[500px] text-center w-full">
+        <h2 class="text-5xl font-bold text-white">Hexa</h2>
 
-    <main class="container">
-        <h2>Hexa</h2>
-
-        <section class="video">
+        <section class="p-5">
             <!-- Run & Results -->
-            <video autoplay muted controls="off" id="webcam" width="400px" height="300px"></video>
+            <video autoplay muted controls="off" id="webcam" height="400px" playsinline class="w-full"></video>
 
             <!-- Run & Results -->
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="card-text" id="output-result">?</h1>
-                    <button id="run-button">Run</button>
-                    <button id="download-button">Download Model</button>
-                </div>
-            </div>
-        </section>
-
-        <section style="margin-top: 50px;">
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="000" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="001" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="002" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="011" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="012" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="022" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="111" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="112" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="122" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group label">
-                    <input type="text" value="222" disabled />
-                    <button class="btn-small">Teach</button>
-                    <span class="info-text">0</span>
+            <div class="p-5 shadow-xl border-4 hover:shadow-sm mt-3">
+                <h1 class="my-4 text-5xl font-bold text-white" id="output-result">?</h1>
+                <div class="justify-center space-x-3">
+                    <button class="bg-gray-800 px-3 py-2 rounded-lg text-white" id="run-button">Start</button>
                 </div>
             </div>
         </section>
     </main>
 
     <!-- Scripts -->
-    <!-- <script src="./main.js"></script> -->
+    <script src="./main.js"></script>
     <script>
-        class ML {
-            constructor() {
-                this.TOPK = 10;
-            }
-
-            async init() {
-                console.log("Models Loading...");
-
-                // Setup Models
-                await this.initclassifier();
-                await this.initMBNET();
-
-                console.log("Models Loaded");
-
-                // Setup Camera
-                await this.initCamera();
-
-                // Setup UI
-                await this.setupLabelTrainingButtons();
-
-                // Add event listener to the RUN Button
-                document.querySelector("#run-button").addEventListener("click", async () => this.run());
-
-                // Add event listener to the DOWNLOAD Button
-                document.querySelector("#download-button").onclick = async () => {
-                    await this.download();
-                };
-            }
-
-            async initclassifier() {
-                this.classifier = knnClassifier.create();
-            }
-
-            async initMBNET() {
-                this.MBNET = await mobilenet.load();
-            }
-
-            async initCamera() {
-                const videoElement = document.querySelector("#webcam");
-                this.CAMERA = await tf.data.webcam(videoElement);
-            }
-
-            async setupLabelTrainingButtons() {
-                // Set the multiple event listeners with class name "label"
-                const labels = document.querySelectorAll(".label");
-
-                labels.forEach((label) => {
-                    label.querySelector("button").addEventListener("click", async () => {
-                        const label_text = label.querySelector("input").value;
-                        const infoText = label.querySelector(".info-text");
-
-                        // Increment the with number of times the label is trained
-                        infoText.innerText = parseInt(infoText.innerText) + 1;
-
-                        // Train the label
-                        // ============================================================
-
-                        // Start grabbing an image of the video
-                        const image = await this.CAMERA.capture();
-
-                        // Pump it through mobilenet and get the logits
-                        const logits = await this.MBNET.infer(image, "conv_preds");
-
-                        // Add this as a bit of data for classifier
-                        this.classifier.addExample(logits, label_text);
-
-                        // Delete memory
-                        image.dispose();
-                        if (logits != null) logits.dispose();
-                    });
-                });
-            }
-
-            async run() {
-                const output = document.querySelector("#output-result");
-
-                setInterval(async () => {
-                    // Add this as a bit of data for knn
-                    const numClasses = this.classifier.getNumClasses();
-
-                    if (numClasses > 0) {
-                        // If classes have been added run predict
-                        const image = await this.CAMERA.capture();
-                        const logits = this.MBNET.infer(image, "conv_preds");
-                        const res = await this.classifier.predictClass(logits, this.TOPK);
-
-                        output.innerText = res.label;
-
-                        // Delete memory
-                        image.dispose();
-                        if (logits != null) logits.dispose();
-                    }
-                }, 500);
-            }
-
-            async download() {
-                const dataset = await this.classifier.getClassifierDataset();
-                const datasetObject = {};
-                Object.keys(dataset).forEach(async (key) => {
-                    const data = await dataset[key].dataSync();
-                    // use Array.from() so when JSON.stringify() it covert to an array string e.g [0.1,-0.2...]
-                    // instead of object e.g {0:"0.1", 1:"-0.2"...}
-                    datasetObject[key] = Array.from(data);
-                });
-                const jsonModel = JSON.stringify(datasetObject);
-
-                //can be change to other source
-                const downloader = document.createElement("a");
-                downloader.download = "model.json";
-                downloader.href = "data:text/text;charset=utf-8," + encodeURIComponent(jsonModel);
-                document.body.appendChild(downloader);
-                downloader.click();
-                downloader.remove();
-            }
-
-            async load() {
-                //can be change to other source
-                const dataset = localStorage.getItem("myData");
-                const tensorObj = JSON.parse(dataset);
-                //covert back to tensor
-                Object.keys(tensorObj).forEach((key) => {
-                    tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
-                });
-                this.classifier.setClassifierDataset(tensorObj);
-            }
-
-            async uploadModel(event) {
-                const inputModel = event.target.files;
-                const fileReader = new FileReader();
-                if (inputModel.length > 0) {
-                    fileReader.onload = async () => {
-                        var dataset = fileReader.result;
-                        var tensorObj = JSON.parse(dataset);
-
-                        Object.keys(tensorObj).forEach((key) => {
-                            tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
-                        });
-
-                        this.classifier.setClassifierDataset(tensorObj);
-                        console.log("Classifier has been set up! Congrats! ");
-                    };
-                }
-                await fileReader.readAsText(inputModel[0]);
-                console.log("Uploaded");
-            }
-        }
-
-        const Machine = new ML()
-        Machine.init();
+        const Machine = new ML().init("app");
     </script>
 </body>
 
