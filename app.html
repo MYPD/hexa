@@ -146,143 +146,159 @@
     </main>
 
     <!-- Scripts -->
+    <!-- <script src="./main.js"></script> -->
     <script>
+        class ML {
+            constructor() {
+                this.TOPK = 10;
+            }
 
-        // Global Variables
-        let KNN = null;
-        let MBNET = null;
-        let CAMERA = null;
+            async init() {
+                console.log("Models Loading...");
 
-        // Config
-        const TOPK = 10;
+                // Setup Models
+                await this.initKNN();
+                await this.initMBNET();
 
-        (async function init() {
-            // Setup Models
-            console.log("Models Loading...");
+                console.log("Models Loaded");
 
-            KNN = knnClassifier.create();
-            MBNET = await mobilenet.load();
+                // Setup Camera
+                await this.initCamera();
 
-            console.log("Models Loaded");
+                // Setup UI
+                await this.setupLabelTrainingButtons();
 
-            const videoElement = document.getElementById("webcam");
-            CAMERA = await tf.data.webcam(videoElement);
+                // Add event listener to the RUN Button
+                document.querySelector("#run-button").addEventListener("click", async () => this.run());
 
-            await setupLabelTrainingButtons();
+                // Add event listener to the DOWNLOAD Button
 
-            // Setup Run Button
-            document.getElementById("run-button").addEventListener("click", () => run());
-
-            // Setup Download ML Model Button
-            document.getElementById("download-button").addEventListener("click", () => save());
-        })();
-
-        /**
-         * Use the trained model to match images to emojis
-         */
-        async function run() {
-            let output = document.getElementById("output-result");
-
-            setInterval(async () => {
-                // Add this as a bit of data for knn
-                const numClasses = KNN.getNumClasses();
-
-                if (numClasses > 0) {
-                    // If classes have been added run predict
-                    const image = await CAMERA.capture();
-                    let logits = MBNET.infer(image, "conv_preds");
-                    const res = await KNN.predictClass(logits, TOPK);
-                    console.log(res);
-                    output.innerText = res.label;
-
-                    // Delete memory
-                    image.dispose();
-                    if (logits != null) logits.dispose();
-                }
-            }, 500);
-        }
-
-        async function save() {
-            const dataset = this.KNN.getClassifierDataset();
-            const datasetObject = {};
-            Object.keys(dataset).forEach(async (key) => {
-                const data = await dataset[key].dataSync();
-                // use Array.from() so when JSON.stringify() it covert to an array string e.g [0.1,-0.2...]
-                // instead of object e.g {0:"0.1", 1:"-0.2"...}
-                datasetObject[key] = Array.from(data);
-            });
-            const jsonModel = JSON.stringify(datasetObject);
-
-            //can be change to other source
-            const downloader = document.createElement('a');
-            downloader.download = "model.json";
-            downloader.href = 'data:text/text;charset=utf-8,' + encodeURIComponent(jsonModel);
-            document.body.appendChild(downloader);
-            downloader.click();
-            downloader.remove();
-        };
-
-        async function load() {
-            //can be change to other source
-            const dataset = localStorage.getItem("myData");
-            const tensorObj = JSON.parse(dataset);
-            //covert back to tensor
-            Object.keys(tensorObj).forEach((key) => {
-                tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
-            });
-            KNN.setClassifierDataset(tensorObj);
-        };
-
-        async function uploadModel(event) {
-            const inputModel = event.target.files;
-            const fileReader = new FileReader();
-            if (inputModel.length > 0) {
-                fileReader.onload = async () => {
-                    var dataset = fileReader.result;
-                    var tensorObj = JSON.parse(dataset);
-
-                    Object.keys(tensorObj).forEach((key) => {
-                        tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
-                    });
-                    KNN.setClassifierDataset(tensorObj);
-                    console.log("Classifier has been set up! Congrats! ");
+                document.querySelector("#download-button").onclick = async () => {
+                    await this.download();
                 };
             }
-            await fileReader.readAsText(inputModel[0]);
-            console.log("Uploaded");
-        };
 
-        async function setupLabelTrainingButtons() {
-            // Set the multiple event listeners with class name "label"
-            const labels = document.querySelectorAll('.label');
+            async initKNN() {
+                this.KNN = knnClassifier.create();
+            }
 
-            labels.forEach(label => {
-                label.addEventListener('click', async () => {
-                    const label_text = label.querySelector('input').value;
-                    const button = label.querySelector('button');
-                    const infoText = label.querySelector('.info-text');
+            async initMBNET() {
+                this.MBNET = await mobilenet.load();
+            }
 
-                    // Increment the with number of times the label is trained
-                    infoText.innerText = parseInt(infoText.innerText) + 1;
+            async initCamera() {
+                const videoElement = document.querySelector("#webcam");
+                this.CAMERA = await tf.data.webcam(videoElement);
+            }
 
-                    // Train the label
-                    // ============================================================
+            async setupLabelTrainingButtons() {
+                // Set the multiple event listeners with class name "label"
+                const labels = document.querySelectorAll(".label");
 
-                    // Start grabbing an image of the video
-                    const image = await CAMERA.capture();
+                labels.forEach((label) => {
+                    label.querySelector("button").addEventListener("click", async () => {
+                        const label_text = label.querySelector("input").value;
+                        const infoText = label.querySelector(".info-text");
 
-                    // Pump it through mobilenet and get the logits
-                    const logits = MBNET.infer(image, "conv_preds");
+                        // Increment the with number of times the label is trained
+                        infoText.innerText = parseInt(infoText.innerText) + 1;
 
-                    // Add this as a bit of data for knn
-                    KNN.addExample(logits, label_text);
+                        // Train the label
+                        // ============================================================
 
-                    // Delete memory
-                    image.dispose();
-                    if (logits != null) logits.dispose();
+                        // Start grabbing an image of the video
+                        const image = await this.CAMERA.capture();
+
+                        // Pump it through mobilenet and get the logits
+                        const logits = await this.MBNET.infer(image, "conv_preds");
+
+                        // Add this as a bit of data for KNN
+                        this.KNN.addExample(logits, label_text);
+
+                        // Delete memory
+                        image.dispose();
+                        if (logits != null) logits.dispose();
+                    });
                 });
-            });
+            }
+
+            async run() {
+                const output = document.querySelector("#output-result");
+
+                setInterval(async () => {
+                    // Add this as a bit of data for knn
+                    const numClasses = this.KNN.getNumClasses();
+
+                    if (numClasses > 0) {
+                        // If classes have been added run predict
+                        const image = await this.CAMERA.capture();
+                        const logits = this.MBNET.infer(image, "conv_preds");
+                        const res = await this.KNN.predictClass(logits, this.TOPK);
+
+                        output.innerText = res.label;
+
+                        // Delete memory
+                        image.dispose();
+                        if (logits != null) logits.dispose();
+                    }
+                }, 500);
+            }
+
+            async download() {
+                const dataset = await this.KNN.getClassifierDataset();
+                console.log(this.KNN);
+                const datasetObject = {};
+                Object.keys(dataset).forEach(async (key) => {
+                    const data = await dataset[key].dataSync();
+                    // use Array.from() so when JSON.stringify() it covert to an array string e.g [0.1,-0.2...]
+                    // instead of object e.g {0:"0.1", 1:"-0.2"...}
+                    datasetObject[key] = Array.from(data);
+                });
+                const jsonModel = JSON.stringify(datasetObject);
+
+                //can be change to other source
+                const downloader = document.createElement("a");
+                downloader.download = "model.json";
+                downloader.href = "data:text/text;charset=utf-8," + encodeURIComponent(jsonModel);
+                document.body.appendChild(downloader);
+                downloader.click();
+                downloader.remove();
+            }
+
+            async load() {
+                //can be change to other source
+                const dataset = localStorage.getItem("myData");
+                const tensorObj = JSON.parse(dataset);
+                //covert back to tensor
+                Object.keys(tensorObj).forEach((key) => {
+                    tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
+                });
+                this.KNN.setClassifierDataset(tensorObj);
+            }
+
+            async uploadModel(event) {
+                const inputModel = event.target.files;
+                const fileReader = new FileReader();
+                if (inputModel.length > 0) {
+                    fileReader.onload = async () => {
+                        var dataset = fileReader.result;
+                        var tensorObj = JSON.parse(dataset);
+
+                        Object.keys(tensorObj).forEach((key) => {
+                            tensorObj[key] = tf.tensor(tensorObj[key], [tensorObj[key].length / 1024, 1024]);
+                        });
+
+                        this.KNN.setClassifierDataset(tensorObj);
+                        console.log("Classifier has been set up! Congrats! ");
+                    };
+                }
+                await fileReader.readAsText(inputModel[0]);
+                console.log("Uploaded");
+            }
         }
+
+        const Machine = new ML()
+        Machine.init();
     </script>
 </body>
 
