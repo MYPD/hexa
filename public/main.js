@@ -20,6 +20,9 @@ class ML {
 		// Add event listener to the run button
 		document.querySelector("#run-button").addEventListener("click", async () => this.run());
 
+		// Add event listener to the camera toggle button
+		document.querySelector("#toggle-button").addEventListener("click", async () => this.toggleCamera());
+
 		if (mode === "train") {
 			// Setup Training UI
 			await this.setupLabelTrainingButtons();
@@ -41,9 +44,13 @@ class ML {
 
 	async initCamera() {
 		const videoElement = document.querySelector("#webcam");
-		const webcam = new Webcam(videoElement, "user");
+		const webcam = new Webcam(videoElement, "enviroment");
 		this.CAMERA = await webcam;
 		await this.CAMERA.start();
+	}
+
+	async toggleCamera() {
+		await this.CAMERA.flip();
 	}
 
 	async loadCustomModel() {
