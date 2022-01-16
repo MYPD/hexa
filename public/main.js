@@ -50,7 +50,7 @@ class ML {
 	}
 
 	async toggleCamera() {
-		await this.CAMERA.flip();
+		this.CAMERA.flip();
 	}
 
 	async loadCustomModel() {
