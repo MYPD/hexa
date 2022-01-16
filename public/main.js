@@ -1,6 +1,7 @@
 class ML {
 	constructor() {
 		this.TOPK = 10;
+		this.modelID = 1;
 	}
 
 	async init(mode) {
@@ -46,7 +47,7 @@ class ML {
 	}
 
 	async loadCustomModel() {
-		await this.knnClassifier.load("./model/model.json");
+		await this.knnClassifier.load("/api/model/" + this.modelID);
 		this.counts = this.knnClassifier.getCountByLabel();
 	}
 
@@ -118,7 +119,26 @@ class ML {
 	}
 
 	async save() {
-		await this.knnClassifier.save();
+		const data = await this.knnClassifier.save(null, true);
+
+		// Make a PUT request to the server
+		const response = await fetch("/api/model/" + this.modelID, {
+			method: "PUT",
+			body: data,
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		// Check the response status
+		if (response.status === 200) {
+			console.log("Model Saved!");
+			alert("Model Saved!");
+		}
+	}
+
+	async saveToFile() {
+		this.knnClassifier.save("Hexa Model - " + String(Date.now()));
 	}
 
 	getTopConfidenceLabel(confidences) {
