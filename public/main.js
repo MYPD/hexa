@@ -1,7 +1,7 @@
 class ML {
 	constructor() {
 		this.TOPK = 10;
-		this.modelID = 1;
+		this.modelID = 2;
 
 		this.shouldFaceUser = false;
 	}
