@@ -2,6 +2,8 @@ class ML {
 	constructor() {
 		this.TOPK = 10;
 		this.modelID = 1;
+
+		this.shouldFaceUser = false;
 	}
 
 	async init(mode) {
@@ -44,13 +46,37 @@ class ML {
 
 	async initCamera() {
 		const videoElement = document.querySelector("#webcam");
-		const webcam = new Webcam(videoElement, "enviroment");
-		this.CAMERA = await webcam;
-		await this.CAMERA.start();
+		if (navigator.mediaDevices.getUserMedia) {
+			navigator.mediaDevices
+				.getUserMedia({
+					video: {
+						facingMode: "environment",
+						facingMode: this.shouldFaceUser ? "user" : "environment",
+					},
+				})
+				.then(function (stream) {
+					videoElement.srcObject = stream;
+					videoElement.play();
+				})
+				.catch(function (err) {
+					alert("Something went wrong when trying to access webcam!");
+				});
+		} else {
+			alert("Your browser/PC does not have webcam support!");
+		}
 	}
 
 	async toggleCamera() {
-		this.CAMERA.flip();
+		// Stop the webcam streams
+		const videoElement = document.querySelector("#webcam");
+		videoElement.pause();
+		videoElement.srcObject.getVideoTracks().forEach((track) => track.stop());
+
+		// Flip the camera
+		this.shouldFaceUser = !this.shouldFaceUser;
+
+		// Restart the camera
+		await this.initCamera();
 	}
 
 	async loadCustomModel() {
@@ -74,7 +100,6 @@ class ML {
 		if (this.classify) clearInterval(this.classify);
 
 		this.classify = setInterval(async () => {
-			// const image = await this.CAMERA.snap();
 			const image = document.getElementById("webcam");
 
 			// Get the features of an image
@@ -96,7 +121,7 @@ class ML {
 
 		labels.forEach((label) => {
 			const infoText = label.querySelector("span");
-			const label_text = label.querySelector("input").value;
+			const label_text = label.querySelector("b").innerText;
 
 			// Restore existing labels example count
 			if (this.counts[label_text] !== undefined) {
