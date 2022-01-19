@@ -9,7 +9,7 @@ const HOC = (app: Application) => {
 	});
 
 	// Tell express to recognize the incoming Request Object as a JSON Object
-	app.use(express.json({ limit: "10mb" }));
+	app.use(express.json({ limit: "50mb" }));
 
 	// Express Static Engine to serve static files
 	app.use("/", express.static(path.join(__dirname, "..", "..", "public")));
