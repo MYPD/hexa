@@ -10,7 +10,7 @@ const app: Application = express();
 preRouteMiddleWares(app);
 
 app.get("/", (req: Request, res: Response) => {
-	return res.status(200).json({ message: "Hello world from Hexa" });
+	return res.redirect("https://www.haikoto.com//");
 });
 
 // API routes

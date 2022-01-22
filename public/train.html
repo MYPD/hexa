@@ -21,187 +21,187 @@
     }
 </style>
 
-<body class="bg-gray-900">
+<body>
     <main class="mx-auto my-1 max-w-2xl text-center w-full">
-        <h2 class="text-5xl font-bold text-white">Hexa</h2>
+        <h2 class="text-5xl font-bold text-black">Hexa</h2>
 
         <section class="grid grid-cols-3 px-5 pt-2 mx-auto">
             <!-- Video/Webcam -->
-            <div class="col-span-2 border-4">
-                <video autoplay muted controls="off" id="webcam" height="400px" playsinline class="w-full"></video>
+            <div class="col-span-2 border-4 border-blue-600">
+                <video autoplay muted controls="off" id="webcam" height="400px" playsinline class="p-2 w-full"></video>
             </div>
             
             <!-- Run & Results -->
-            <div class="col-span-1 bg-black p-1 py-5 shadow-xl border-4 hover:shadow-sm">
-                <h1 class="my-4 text-5xl font-bold text-white" id="output-result">?</h1>
+            <div class="col-span-1 p-1 py-5 shadow-xl border-4 border-blue-600 hover:shadow-sm">
+                <h1 class="my-4 text-5xl font-bold text-blue-600" id="output-result">?</h1>
                 <div class="flex flex-col gap-3">
-                    <button class="bg-gray-800 px-3 py-2 m-2 rounded-lg text-white" id="run-button">Test</button>
-                    <button class="bg-gray-800 px-3 py-2 m-2 rounded-lg text-white" id="download-button">Save Model</button>
-                    <button class="bg-gray-800 px-3 py-2 m-2 rounded-lg text-white" id="toggle-button">Camera Toggle</button>
+                    <button class="bg-blue-600 hover:bg-blue-700 px-3 py-2 m-2 rounded-lg text-white" id="run-button">Test</button>
+                    <button class="bg-blue-600 hover:bg-blue-700 px-3 py-2 m-2 rounded-lg text-white" id="download-button">Save Model</button>
+                    <button class="bg-blue-600 hover:bg-blue-700 px-3 py-2 m-2 rounded-lg text-white" id="toggle-button">Camera Toggle</button>
                 </div>
             </div>
         </section>
 
         <section class="grid grid-cols-5 px-5 pt-1 mx-auto gap-2 text-center">
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>000</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>000</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>001</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>001</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>002</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>002</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>010</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>010</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>011</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>011</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>012</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>012</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>020</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>020</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>021</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>021</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>022</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>022</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>100</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>100</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>101</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>101</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>102</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>102</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>110</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>110</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>111</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>111</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>112</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>112</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>120</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>120</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>121</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>121</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>122</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>122</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>200</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>200</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>201</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>201</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>202</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>202</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>210</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>210</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>211</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>211</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>212</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>212</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>220</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>220</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>221</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>221</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
 
             <div class="label">
-                <button type="button" class="p-1 bg-gray-300 hover:bg-gray-500 hover:text-white w-full">
-                    <b>222</b> <br/> <span class="font-bold text-red-600">0</span>
+                <button type="button" class="p-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white w-full">
+                    <b>222</b> <br/> <span class="font-bold text-black">0</span>
                 </button>
             </div>
         </section>
